@@ -3,7 +3,7 @@
    ========================================================= */
 
 // >>> GANTI dengan URL Web App Google Apps Script kamu (lihat README) <<<
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKRWeJDz96k9IuSM_4BFyB2EG4mB3j0hmBnwMqGFvA9nVvTHd67jJ_jI9e-Hd_pXEZrw/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID/exec";
 
 const WA_NUMBERS = {
   alfa: "6281247770168",
@@ -69,7 +69,16 @@ window.addEventListener("load", () => {
       const item = document.createElement("div");
       const fromLeft = (i - group.start) % 2 === 0;
       item.className = "gallery-item reveal-gallery " + (fromLeft ? "from-left" : "from-right");
-      item.innerHTML = `<img src="assets/gallery/${i}.jpg" alt="Kenangan ${i}" loading="lazy">`;
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.alt = "Kenangan " + i;
+      img.src = `assets/gallery/${i}.jpg`;
+      // beberapa foto mungkin diupload sebagai .jpeg, bukan .jpg — coba otomatis kalau gagal
+      img.addEventListener("error", function onErr(){
+        img.removeEventListener("error", onErr);
+        img.src = `assets/gallery/${i}.jpeg`;
+      });
+      item.appendChild(img);
       grid.appendChild(item);
     }
   });
