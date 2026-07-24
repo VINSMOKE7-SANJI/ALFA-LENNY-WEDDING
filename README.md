@@ -38,6 +38,10 @@ undangan-alfaber-lenny/
 - Taruh video pendek (mp4, idealnya 10–20 detik, tanpa suara penting karena akan diberi overlay teks) di `assets/video/intro.mp4`
 - Screenshot pertama video sebagai poster: `assets/video/poster.jpg`
 
+### d. Foto loading awal
+- Taruh 1 foto (idealnya foto prewedding/portrait) di `assets/loading/loading-photo.jpg`
+- Foto ini tampil penuh layar saat halaman pertama kali dimuat, dengan ring emas kecil + tulisan "A & L" di atasnya sebagai indikator loading
+
 > Semua foto/video/musik **tidak aku sertakan** karena aku tidak bisa membuat konten pribadi kalian — tinggal drag & drop ke folder yang sesuai lewat GitHub web atau lewat komputer kamu.
 
 ## 3. Setup RSVP (Google Sheet + Apps Script) — WAJIB agar RSVP berfungsi
@@ -57,9 +61,17 @@ undangan-alfaber-lenny/
    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID/exec";
    ```
    Ganti dengan URL Web App kamu dari langkah 5.
-7. Setiap kali RSVP dikirim, data otomatis masuk ke sheet bernama **"RSVP"** di spreadsheet kamu dengan kolom: Timestamp, Nama, Jumlah Tamu, Kehadiran, Ucapan, Konfirmasi WA (kolom terakhir untuk kamu sendiri — tidak muncul di website).
+7. Setiap kali RSVP dikirim, data otomatis masuk ke sheet bernama **"RSVP"** di spreadsheet kamu dengan kolom: Timestamp, RSVP ID, Nama, Jumlah Tamu, Kehadiran, Ucapan, Konfirmasi WA (kolom "RSVP ID" & "Konfirmasi WA" untuk kamu sendiri — tidak muncul di website).
 
 > Setiap kali kamu **mengedit ulang** kode `Code.gs`, kamu harus **Deploy → Manage deployments → Edit (ikon pensil) → Version: New version → Deploy** lagi supaya perubahan berlaku.
+
+### ⚠️ Kalau kamu sudah pernah setup sheet "RSVP" sebelumnya
+Struktur kolom sekarang berubah (ada tambahan kolom "RSVP ID" di kolom B). Supaya tidak bentrok dengan data lama:
+- **Cara termudah**: hapus/rename sheet tab "RSVP" yang lama, lalu jalankan sekali RSVP percobaan dari website — sheet baru dengan header yang benar akan otomatis dibuat.
+- **Atau manual**: sisipkan 1 kolom baru di posisi B (setelah Timestamp) dan beri judul "RSVP ID", geser kolom-kolom lain ke kanan sesuai urutan: Timestamp, RSVP ID, Nama, Jumlah Tamu, Kehadiran, Ucapan, Konfirmasi WA.
+
+### Alur RSVP terbaru
+Tamu sekarang mengisi form lalu klik **"Kirim Konfirmasi"** dulu (data otomatis tersimpan ke Sheet + rekap Hadir/Tidak Hadir/Ragu-ragu langsung ter-update). Setelah itu baru muncul pilihan tombol **WhatsApp ke Alfa / ke Lenny** untuk melanjutkan konfirmasi personal — nomor mana yang dipilih otomatis dicatat di kolom "Konfirmasi WA" tanpa perlu tamu mengisi apa pun lagi.
 
 ## 4. Sesuaikan Nomor WhatsApp & Rekening
 
