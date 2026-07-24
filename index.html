@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Marcellus&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -36,13 +36,28 @@
 
 <!-- ================= COVER / HERO ================= -->
 <section id="cover">
-  <div class="starfield" id="starfield"></div>
+  <div class="leaf-field" id="starfield"></div>
   <div class="cover-inner">
     <p class="eyebrow">The Wedding Of</p>
     <div class="seal-mark">
       <svg viewBox="0 0 140 140" class="seal-ornament">
-        <circle cx="70" cy="70" r="66" class="seal-outer"/>
         <circle cx="70" cy="70" r="56" class="seal-inner"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(70.0,12.0) rotate(0.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(92.2,16.4) rotate(22.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(111.0,29.0) rotate(45.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(123.6,47.8) rotate(67.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(128.0,70.0) rotate(90.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(123.6,92.2) rotate(112.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(111.0,111.0) rotate(135.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(92.2,123.6) rotate(157.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(70.0,128.0) rotate(180.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(47.8,123.6) rotate(202.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(29.0,111.0) rotate(225.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(16.4,92.2) rotate(247.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(12.0,70.0) rotate(270.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(16.4,47.8) rotate(292.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(29.0,29.0) rotate(315.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(47.8,16.4) rotate(337.5)" class="wreath-leaf"/>
       </svg>
       <span class="seal-initials">A&nbsp;<i>&amp;</i>&nbsp;L</span>
     </div>
@@ -51,7 +66,7 @@
     <p class="cover-guest">Kepada Yth. Bapak/Ibu/Saudara/i</p>
     <p class="cover-guest-name" id="guest-name">Tamu Undangan</p>
     <button id="open-invitation" class="btn-gold">
-      <i class="fa-regular fa-envelope-open"></i>
+      <i class="fa-solid fa-seedling"></i>
       <span>Buka Undangan</span>
     </button>
   </div>
@@ -242,8 +257,23 @@
   <section class="section closing-section">
     <div class="seal-mark small reveal">
       <svg viewBox="0 0 140 140" class="seal-ornament">
-        <circle cx="70" cy="70" r="66" class="seal-outer"/>
         <circle cx="70" cy="70" r="56" class="seal-inner"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(70.0,12.0) rotate(0.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(92.2,16.4) rotate(22.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(111.0,29.0) rotate(45.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(123.6,47.8) rotate(67.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(128.0,70.0) rotate(90.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(123.6,92.2) rotate(112.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(111.0,111.0) rotate(135.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(92.2,123.6) rotate(157.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(70.0,128.0) rotate(180.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(47.8,123.6) rotate(202.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(29.0,111.0) rotate(225.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(16.4,92.2) rotate(247.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(12.0,70.0) rotate(270.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(16.4,47.8) rotate(292.5)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(29.0,29.0) rotate(315.0)" class="wreath-leaf"/>
+      <path d="M0,-13 C4.5,-8 4.5,3 0,9 C-4.5,3 -4.5,-8 0,-13 Z" transform="translate(47.8,16.4) rotate(337.5)" class="wreath-leaf"/>
       </svg>
       <span class="seal-initials">A&nbsp;<i>&amp;</i>&nbsp;L</span>
     </div>
