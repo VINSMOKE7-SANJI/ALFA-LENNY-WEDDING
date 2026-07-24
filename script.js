@@ -3,7 +3,7 @@
    ========================================================= */
 
 // >>> GANTI dengan URL Web App Google Apps Script kamu (lihat README) <<<
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKRWeJDz96k9IuSM_4BFyB2EG4mB3j0hmBnwMqGFvA9nVvTHd67jJ_jI9e-Hd_pXEZrw/exec";
 
 const WA_NUMBERS = {
   alfa: "6281247770168",
