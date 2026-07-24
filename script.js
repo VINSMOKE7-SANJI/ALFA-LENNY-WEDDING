@@ -3,7 +3,7 @@
    ========================================================= */
 
 // >>> GANTI dengan URL Web App Google Apps Script kamu (lihat README) <<<
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0vGnCKqdzPuC7ytGSNsvcRz6lVv5EnVCQYRQ-5kpAzbYwjq82QfX6HBLCtIaJBigOiw/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID/exec";
 
 const WA_NUMBERS = {
   alfa: "6281247770168",
@@ -11,7 +11,13 @@ const WA_NUMBERS = {
 };
 
 const WEDDING_DATE = new Date("2026-10-25T07:00:00+07:00");
-const GALLERY_COUNT = 16;
+
+// pembagian galeri jadi 3 kelompok cerita (total 16 foto)
+const GALLERY_GROUPS = [
+  { id: "gallery-grid-1", start: 1, end: 5 },
+  { id: "gallery-grid-2", start: 6, end: 11 },
+  { id: "gallery-grid-3", start: 12, end: 16 }
+];
 
 /* ---------------- Guest name from URL (?to=Nama) ---------------- */
 (function personalize(){
@@ -25,8 +31,18 @@ const GALLERY_COUNT = 16;
 /* ---------------- Preloader ---------------- */
 window.addEventListener("load", () => {
   const pre = document.getElementById("preloader");
-  setTimeout(() => pre.classList.add("hidden"), 900);
+  setTimeout(() => {
+    pre.classList.add("hidden");
+    document.getElementById("cover").classList.add("opening");
+  }, 1100);
 });
+// kalau foto loading belum diupload / gagal dimuat, sembunyikan supaya tidak tampil ikon rusak
+(function preloaderImgFallback(){
+  const img = document.getElementById("preloader-img");
+  if (img) {
+    img.addEventListener("error", () => { img.style.display = "none"; });
+  }
+})();
 
 /* ---------------- Falling leaves (botanical ambience) ---------------- */
 (function leafField(){
@@ -44,15 +60,19 @@ window.addEventListener("load", () => {
   }
 })();
 
-/* ---------------- Gallery grid ---------------- */
+/* ---------------- Gallery grid (3 kelompok + animasi masuk berselang-seling) ---------------- */
 (function buildGallery(){
-  const grid = document.getElementById("gallery-grid");
-  for (let i = 1; i <= GALLERY_COUNT; i++) {
-    const item = document.createElement("div");
-    item.className = "gallery-item reveal-gallery";
-    item.innerHTML = `<img src="assets/gallery/${i}.jpg" alt="Kenangan ${i}" loading="lazy">`;
-    grid.appendChild(item);
-  }
+  GALLERY_GROUPS.forEach(group => {
+    const grid = document.getElementById(group.id);
+    if (!grid) return;
+    for (let i = group.start; i <= group.end; i++) {
+      const item = document.createElement("div");
+      const fromLeft = (i - group.start) % 2 === 0;
+      item.className = "gallery-item reveal-gallery " + (fromLeft ? "from-left" : "from-right");
+      item.innerHTML = `<img src="assets/gallery/${i}.jpg" alt="Kenangan ${i}" loading="lazy">`;
+      grid.appendChild(item);
+    }
+  });
 })();
 
 /* ---------------- Open invitation ---------------- */
@@ -68,9 +88,14 @@ openBtn.addEventListener("click", () => {
   cover.classList.add("closing");
   setTimeout(() => {
     cover.style.display = "none";
+    mainContent.style.display = "block";
+    // paksa reflow supaya transisi opacity berjalan
+    void mainContent.offsetHeight;
     mainContent.classList.add("shown");
     document.body.style.overflow = "auto";
+    window.scrollTo(0, 0);
     initRevealObserver();
+    loadRecap();
   }, 950);
 });
 
@@ -97,9 +122,13 @@ function initRevealObserver(){
   }, { threshold: 0.15 });
   targets.forEach(t => obs.observe(t));
 
-  // stagger gallery items
-  document.querySelectorAll(".gallery-item").forEach((item, idx) => {
-    item.style.transitionDelay = (idx % 8) * 0.08 + "s";
+  // stagger tiap kelompok galeri
+  GALLERY_GROUPS.forEach(group => {
+    const grid = document.getElementById(group.id);
+    if (!grid) return;
+    Array.from(grid.children).forEach((item, idx) => {
+      item.style.transitionDelay = (idx % 6) * 0.09 + "s";
+    });
   });
 }
 
@@ -136,56 +165,76 @@ document.querySelectorAll(".btn-copy").forEach(btn => {
   });
 });
 
-/* ---------------- RSVP + WhatsApp + Google Sheet ---------------- */
+/* ---------------- RSVP (2 langkah): 1) Kirim Konfirmasi  2) Pilih WA ---------------- */
 const rsvpForm = document.getElementById("rsvp-form");
 const rsvpStatus = document.getElementById("rsvp-status");
+const rsvpSubmitBtn = document.getElementById("rsvp-submit");
+const waChoiceWrap = document.getElementById("wa-choice-wrap");
 
-function sendRsvpToSheet(data){
+let pendingRsvp = null; // menyimpan data RSVP terakhir yang sudah dikirim, menunggu dipilih WA-nya
+
+function sendToSheet(payload){
   return fetch(APPS_SCRIPT_URL, {
     method: "POST",
     mode: "no-cors",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
 }
 
+rsvpForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const nama = document.getElementById("rsvp-nama").value.trim();
+  const jumlah = document.getElementById("rsvp-jumlah").value;
+  const kehadiran = rsvpForm.querySelector('input[name="kehadiran"]:checked').value;
+  const ucapan = document.getElementById("rsvp-ucapan").value.trim();
+
+  if (!nama || !ucapan) {
+    rsvpStatus.textContent = "Mohon isi nama dan ucapan terlebih dahulu.";
+    return;
+  }
+
+  const rsvpId = "rsvp_" + Date.now();
+  pendingRsvp = { rsvpId, nama, jumlah, kehadiran, ucapan };
+
+  sendToSheet({ action: "submit", ...pendingRsvp });
+
+  rsvpStatus.textContent = "Terima kasih, " + nama + "! Silakan lanjutkan konfirmasi via WhatsApp di bawah ini.";
+  rsvpSubmitBtn.disabled = true;
+  rsvpSubmitBtn.style.opacity = "0.6";
+  waChoiceWrap.classList.add("show");
+
+  showFloatingNotif(nama, kehadiran, ucapan);
+  updateRecapLocally(kehadiran);
+});
+
 document.querySelectorAll(".btn-wa").forEach(btn => {
   btn.addEventListener("click", () => {
-    const nama = document.getElementById("rsvp-nama").value.trim();
-    const jumlah = document.getElementById("rsvp-jumlah").value;
-    const kehadiran = rsvpForm.querySelector('input[name="kehadiran"]:checked').value;
-    const ucapan = document.getElementById("rsvp-ucapan").value.trim();
-
-    if (!nama || !ucapan) {
-      rsvpStatus.textContent = "Mohon isi nama dan ucapan terlebih dahulu.";
-      return;
-    }
+    if (!pendingRsvp) return;
 
     const target = btn.getAttribute("data-target"); // "alfa" | "lenny"
     const waNumber = WA_NUMBERS[target];
+    const dikirimKe = target === "alfa" ? "Alfa" : "Lenny";
 
-    const payload = {
-      nama, jumlah, kehadiran, ucapan,
-      dikirimKe: target === "alfa" ? "Alfa" : "Lenny",
-      waktu: new Date().toISOString()
-    };
+    // update baris RSVP yang sudah ada di Google Sheet (kolom internal, tidak tampil di website)
+    sendToSheet({ action: "updateWa", rsvpId: pendingRsvp.rsvpId, dikirimKe });
 
-    // simpan ke Google Sheet (tidak ditampilkan di notifikasi mana nomor WA yang dipilih)
-    sendRsvpToSheet(payload);
-
-    // buka whatsapp dengan pesan siap kirim
     const message =
 `Halo, saya ingin mengonfirmasi kehadiran:
-Nama: ${nama}
-Jumlah Tamu: ${jumlah}
-Kehadiran: ${kehadiran}
-Ucapan: ${ucapan}`;
+Nama: ${pendingRsvp.nama}
+Jumlah Tamu: ${pendingRsvp.jumlah}
+Kehadiran: ${pendingRsvp.kehadiran}
+Ucapan: ${pendingRsvp.ucapan}`;
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank");
 
-    rsvpStatus.textContent = "Terima kasih! Konfirmasi kamu sedang dikirim.";
-    showFloatingNotif(nama, kehadiran, ucapan);
+    rsvpStatus.textContent = "Konfirmasi kamu sudah terkirim. Terima kasih banyak!";
+    waChoiceWrap.classList.remove("show");
+    rsvpSubmitBtn.disabled = false;
+    rsvpSubmitBtn.style.opacity = "1";
     rsvpForm.reset();
+    pendingRsvp = null;
   });
 });
 
@@ -196,7 +245,7 @@ let notifTimer = null;
 function showFloatingNotif(nama, kehadiran, ucapan){
   clearTimeout(notifTimer);
   const shortUcapan = ucapan.length > 60 ? ucapan.slice(0,60) + "…" : ucapan;
-  floatingNotif.innerHTML = `<b>${escapeHtml(nama)}</b> &middot; ${escapeHtml(kehadiran)}<br><span style="color:var(--ivory-dim);font-size:0.8rem;">${escapeHtml(shortUcapan)}</span>`;
+  floatingNotif.innerHTML = `<b>${escapeHtml(nama)}</b> &middot; ${escapeHtml(kehadiran)}<br><span>${escapeHtml(shortUcapan)}</span>`;
   floatingNotif.classList.add("show");
   notifTimer = setTimeout(() => floatingNotif.classList.remove("show"), 10000);
 }
@@ -207,29 +256,77 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+/* ---------------- Rekap Hadir / Tidak Hadir / Ragu-ragu ---------------- */
+const recapEls = {
+  hadir: document.getElementById("recap-hadir"),
+  tidak: document.getElementById("recap-tidak"),
+  ragu: document.getElementById("recap-ragu")
+};
+let cachedGuestList = null;
+
+function countRecap(list){
+  const counts = { hadir: 0, tidak: 0, ragu: 0 };
+  (list || []).forEach(g => {
+    const k = (g.kehadiran || "").toLowerCase();
+    if (k === "hadir") counts.hadir++;
+    else if (k === "tidak hadir") counts.tidak++;
+    else if (k.startsWith("ragu")) counts.ragu++;
+  });
+  return counts;
+}
+
+function renderRecap(counts){
+  recapEls.hadir.textContent = counts.hadir;
+  recapEls.tidak.textContent = counts.tidak;
+  recapEls.ragu.textContent = counts.ragu;
+}
+
+// naikkan angka rekap seketika (optimistic) sebelum data server ter-refresh
+function updateRecapLocally(kehadiran){
+  const k = kehadiran.toLowerCase();
+  if (k === "hadir") recapEls.hadir.textContent = (parseInt(recapEls.hadir.textContent) || 0) + 1;
+  else if (k === "tidak hadir") recapEls.tidak.textContent = (parseInt(recapEls.tidak.textContent) || 0) + 1;
+  else if (k.startsWith("ragu")) recapEls.ragu.textContent = (parseInt(recapEls.ragu.textContent) || 0) + 1;
+}
+
+async function loadRecap(){
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, { method: "GET" });
+    const list = await res.json();
+    cachedGuestList = list;
+    renderRecap(countRecap(list));
+  } catch (e) {
+    // biarkan default 0 kalau belum sempat setup Apps Script
+  }
+}
+
 /* ---------------- Guest list (fetched from Google Sheet) ---------------- */
 const toggleGuestBtn = document.getElementById("toggle-guestlist");
 const guestListEl = document.getElementById("guest-list");
-let guestListLoaded = false;
 
 toggleGuestBtn.addEventListener("click", async () => {
   guestListEl.classList.toggle("open");
-  if (!guestListLoaded && guestListEl.classList.contains("open")) {
-    guestListEl.innerHTML = '<p style="color:var(--ivory-dim);text-align:center;">Memuat ucapan…</p>';
+  if (guestListEl.classList.contains("open")) {
+    if (cachedGuestList) {
+      renderGuestList(cachedGuestList);
+      return;
+    }
+    guestListEl.innerHTML = '<p class="guest-list-msg">Memuat ucapan…</p>';
     try {
       const res = await fetch(APPS_SCRIPT_URL, { method: "GET" });
       const list = await res.json();
+      cachedGuestList = list;
+      renderRecap(countRecap(list));
       renderGuestList(list);
-      guestListLoaded = true;
     } catch (e) {
-      guestListEl.innerHTML = '<p style="color:var(--ivory-dim);text-align:center;">Belum ada data / periksa koneksi.</p>';
+      guestListEl.innerHTML = '<p class="guest-list-msg">Belum ada data / periksa koneksi.</p>';
     }
   }
 });
 
 function renderGuestList(list){
   if (!Array.isArray(list) || list.length === 0) {
-    guestListEl.innerHTML = '<p style="color:var(--ivory-dim);text-align:center;">Belum ada ucapan.</p>';
+    guestListEl.innerHTML = '<p class="guest-list-msg">Belum ada ucapan.</p>';
     return;
   }
   guestListEl.innerHTML = list.slice().reverse().map(g => `
