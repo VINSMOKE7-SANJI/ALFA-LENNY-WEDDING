@@ -28,18 +28,19 @@ window.addEventListener("load", () => {
   setTimeout(() => pre.classList.add("hidden"), 900);
 });
 
-/* ---------------- Starfield ---------------- */
-(function starfield(){
+/* ---------------- Falling leaves (botanical ambience) ---------------- */
+(function leafField(){
   const field = document.getElementById("starfield");
-  const count = 60;
+  const count = 26;
   for (let i = 0; i < count; i++) {
-    const star = document.createElement("span");
-    star.style.left = Math.random() * 100 + "%";
-    star.style.bottom = -10 - Math.random() * 20 + "px";
-    star.style.animationDuration = 8 + Math.random() * 14 + "s";
-    star.style.animationDelay = Math.random() * 10 + "s";
-    star.style.opacity = 0.3 + Math.random() * 0.5;
-    field.appendChild(star);
+    const leaf = document.createElement("span");
+    leaf.style.left = Math.random() * 100 + "%";
+    leaf.style.top = -10 - Math.random() * 20 + "px";
+    leaf.style.animationDuration = 10 + Math.random() * 12 + "s";
+    leaf.style.animationDelay = Math.random() * 10 + "s";
+    leaf.style.opacity = 0.35 + Math.random() * 0.4;
+    leaf.style.transform = `scale(${0.7 + Math.random() * 0.6})`;
+    field.appendChild(leaf);
   }
 })();
 
